@@ -11,7 +11,7 @@ import HelloWorld from './components/HelloWorld.vue'
     <ul class="menu bg-base-100">
       <li><a>Item 1</a></li>
       <li><a>Item 2</a></li>
-      <li><a>Item 3</a></li>
+      <li class="text-gray-400"><a><i class="ri-add-line" /> Add a manager</a></li>
     </ul>
       sidebar
     </div>
