@@ -5,6 +5,21 @@ import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
+  <div class="flex flex-1">
+    <!--侧边栏-->
+    <div class="flex flex-col bg-white border-r w-1/4 p-2">
+    <ul class="menu bg-base-100">
+      <li><a>Item 1</a></li>
+      <li><a>Item 2</a></li>
+      <li><a>Item 3</a></li>
+    </ul>
+      sidebar
+    </div>
+
+    <div class="flex-1 bg-white w-1/4 p-2">
+      content
+    </div>
+  </div>
   <!-- <div>
     <a href="https://vitejs.dev" target="_blank">
       <img src="/vite.svg" class="logo" alt="Vite logo" />
@@ -15,10 +30,6 @@ import HelloWorld from './components/HelloWorld.vue'
   </div>
   <HelloWorld msg="Vite + Vue" /> -->
 
-  <!--侧边栏-->
-  <div class="flex bg-black">
-  ...
-  </div>
 </template>
 
 <style scoped>
