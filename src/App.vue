@@ -1,12 +1,21 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import { ref } from 'vue';
+import { invoke } from '@tauri-apps/api'
+import { onMounted, ref } from 'vue';
 import HelloWorld from './components/HelloWorld.vue'
 import ModCard from './components/ModCard.vue';
 import PathInput from './components/PathInput.vue';
 
-const modDir = ref("")
+const modDir = ref(".")
+const modList = ref([])
+
+onMounted(getModList)
+
+async function getModList() {
+  if (modDir.value === "") return
+  modList.value = await invoke('get_mod_list', {path: modDir.value})
+  console.log(modList.value)
+}
+
 </script>
 
 <template>
@@ -24,7 +33,7 @@ const modDir = ref("")
     <div class="flex flex-col flex-1 bg-white p-2">
 
       <!-- Mod folder -->
-      <PathInput v-model="modDir"/>
+      <PathInput v-model="modDir" @update:model-value="getModList"/>
       <!-- {{modDir}} -->
 
 
@@ -50,17 +59,10 @@ const modDir = ref("")
       <!--Content-->
       <div class="flex-1 w-full p-1 overflow-x-hidden overflow-y-auto">
         <!-- <HelloWorld msg="heihei" /> -->
-        <ModCard />
-        <ModCard />
-        <ModCard />
-        <ModCard />
-        <ModCard />
-        <ModCard />
-        <ModCard />
-        <ModCard />
-        <ModCard />
-        <ModCard />
-        <ModCard />
+        <ModCard v-for="mod in modList" :modName="mod"/>
+        <ModCard modName="testMod1"/>
+        <ModCard modName="testMod2"/>
+        <ModCard modName="testMod3"/>
       </div>
     </div>
   </div>

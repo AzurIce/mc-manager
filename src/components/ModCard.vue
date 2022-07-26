@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+const props = defineProps<{ modName: String }>()
+
 const checked = ref(false)
 
 </script>
 
 <template>
   <div class="w-full rounded-md border flex p-2 items-center m-1">
-    <div class="flex flex-col items-center">
-      <h2>ModName</h2>
+    <div class="flex flex-col">
+      <h2>{{ modName }}</h2>
       <div class="w-16 h-16 bg-gray-200 rounded text-center">
         Icon
       </div>
@@ -18,7 +20,7 @@ const checked = ref(false)
 
     <div class="dropdown dropdown-end m-1">
       <div class="indicator">
-        <span class="indicator-item badge badge-success"></span> 
+        <span class="indicator-item badge badge-success"></span>
         <div class="tooltip" data-tip="New Version">
           <label tabindex="0" class="btn">Version</label>
         </div>
@@ -29,7 +31,7 @@ const checked = ref(false)
       </ul>
     </div>
 
-    <input type="checkbox" class="checkbox" v-model="checked"/>
+    <input type="checkbox" class="checkbox" v-model="checked" />
 
   </div>
 </template>
