@@ -1,19 +1,53 @@
 <script setup lang="ts">
 import { invoke } from '@tauri-apps/api'
-import { onMounted, ref } from 'vue';
-import HelloWorld from './components/HelloWorld.vue'
+import { dataDir, join, resolveResource } from '@tauri-apps/api/path';
+import { computed } from '@vue/reactivity';
+import { onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import ModCard from './components/ModCard.vue';
 import PathInput from './components/PathInput.vue';
+import { State, useStore } from './store';
+import { resourceDir } from '@tauri-apps/api/path';
+// const resourceDirPath = ref("")
+// const resource = ref("")
 
-const modDir = ref(".")
-const modList = ref([])
+const store = useStore()
+
+const modDir = computed(() => store.state.modDir)
+
+// const modDir = ref(".")
+const modFileNameList = ref([])
+
+
+onBeforeMount(async () => {
+  // resource.value = await resolveResource("state.json")
+  // resourceDirPath.value = await resourceDir()
+  const stateJsonFilePath = await resolveResource("state.json")
+  // console.log(stateJsonFilePath)
+  if (await invoke('is_dir_exist', { path: stateJsonFilePath })) {
+    const stateJson = <string>await invoke('get_json', { path: stateJsonFilePath })
+    const state = JSON.parse(stateJson)
+    store.commit('updateState', state)
+    // console.log(state)
+  } else {
+    await invoke('save_json', {
+      path: stateJsonFilePath,
+      json: JSON.stringify(store.state)
+    })
+  }
+})
 
 onMounted(getModList)
 
+watch(modDir, () => getModList())
+
+function onUpdateModDir(newModDir: string) {
+  store.commit('updateModDir', newModDir)
+}
+
 async function getModList() {
   if (modDir.value === "") return
-  modList.value = await invoke('get_mod_list', {path: modDir.value})
-  console.log(modList.value)
+  modFileNameList.value = await invoke('get_mod_file_name_list', { path: modDir.value })
+  // console.log(modPathList.value)
 }
 
 </script>
@@ -31,9 +65,8 @@ async function getModList() {
     </div> -->
 
     <div class="flex flex-col flex-1 bg-white p-2">
-
       <!-- Mod folder -->
-      <PathInput v-model="modDir" @update:model-value="getModList"/>
+      <PathInput :model-value="modDir" @update:model-value="onUpdateModDir" />
       <!-- {{modDir}} -->
 
 
@@ -59,10 +92,10 @@ async function getModList() {
       <!--Content-->
       <div class="flex-1 w-full p-1 overflow-x-hidden overflow-y-auto">
         <!-- <HelloWorld msg="heihei" /> -->
-        <ModCard v-for="mod in modList" :modName="mod"/>
-        <ModCard modName="testMod1"/>
-        <ModCard modName="testMod2"/>
-        <ModCard modName="testMod3"/>
+        <ModCard v-for="modFileName in modFileNameList" :modFileName="modFileName" />
+        <!-- <ModCard modPath="testModPath1"/>
+        <ModCard modPath="testModPath2"/>
+        <ModCard modPath="testModPath3"/> -->
       </div>
     </div>
   </div>

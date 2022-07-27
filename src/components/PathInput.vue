@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { invoke } from '@tauri-apps/api'
 import { open } from '@tauri-apps/api/dialog'
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps<{ modelValue: string }>()
 const emits = defineEmits(['update:modelValue'])
 
-const valid = ref(false)
+
+const valid = ref(true)
 const inputPath = ref(props.modelValue)
+watch(props, (newValue, oldValue) => {
+  inputPath.value = newValue.modelValue
+})
 async function onInputPathChanged(e: any) {
   valid.value = await invoke('is_dir_exist', {path: inputPath.value})
   if (valid.value) { // Check if exist(with rust)
